@@ -127,7 +127,6 @@ func (s *CardService) IssueCard(ctx context.Context, req *pb.IssueCardRequest) (
 	}
 	log.Printf("Ledger entry created successfully: %+v", ledgerEntry)
 	return card, nil
-	// 	ExpiryDate:       expiryDate.Format("2006-01-02 15:04:05"),
 }
 
 func (s *CardService) AuthorizeTransaction(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
