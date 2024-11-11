@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+option go_package = "/generated/transaction_proto";
+
+service TransactionService {
+  rpc CreateTransaction(CreateTxnRequest) returns (TransactionUpdateResponse) {}
+  rpc UpdateStatus(UpdateStatusRequest) returns (TransactionUpdateResponse) {}
+  rpc GetTransaction(GetTxnRequest) returns (Transaction) {}
+  rpc ListTransactions(TxnFilter) returns (TxnList1) {}
+}
+
+message Decimal2 {
+    string value = 1; 
+}
+
+message Transaction {
+  string id = 1;
+  string card_id = 2;
+   string amount = 3;
+  string currency = 4;
+  string type = 5;
+  string status = 6;
+  string reference_number = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp settled_at = 10;
+}
+
+message TransactionUpdateResponse {
+  string id = 1;
+  string card_id = 2;
+  string amount = 3;
+  string currency = 4;
+  string type = 5;
+  string status = 6;
+  string reference_number = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  string settled_at = 10;
+}
+
+message CreateTxnRequest {
+  string card_id = 1;
+  string merchant_id = 2;
+  string amount = 3;
+  string currency = 4;
+  string type = 5;
+}
+
+message UpdateStatusRequest {
+  string transaction_id = 1;
+  string new_status = 2;
+}
+
+message GetTxnRequest {
+  string transaction_id = 1;
+}
+
+message TxnFilter {
+  string card_id = 1;
+  string status = 2;
+  google.protobuf.Timestamp start_date = 3;
+  google.protobuf.Timestamp end_date = 4;
+}
+
+message TxnList {
+  repeated Transaction transactions = 1;
+}
+
+message TxnList1 {
+  repeated TransactionUpdateResponse transactions = 1;
+}

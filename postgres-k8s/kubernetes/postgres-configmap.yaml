@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  POSTGRES_DB: Financial_ledger_db
+  POSTGRES_USER: postgres
+  POSTGRESQL_PORT: "5432"

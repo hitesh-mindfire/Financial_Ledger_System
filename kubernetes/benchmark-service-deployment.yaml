@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: benchmark-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: benchmark-service
+  template:
+    metadata:
+      labels:
+        app: benchmark-service
+    spec:
+      containers:
+      - name: benchmark-service
+        image: your-docker-repo/benchmark-service:latest  # Replace with your Docker image
+        ports:
+        - containerPort: 8080
+        env:
+        - name: CARD_SERVICE_URL
+          value: "card-service:8080"
+        - name: GRPC_METHOD
+          value: "proto.CardService.IssueCard"
+        - name: PROTO_FILE
+          value: "proto/card.proto"
+        # You can also define other services and their configurations

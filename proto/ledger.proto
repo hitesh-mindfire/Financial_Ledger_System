@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package ledgerpb;
+
+import "google/protobuf/timestamp.proto";
+option go_package = "/generated/ledger_proto";
+
+// Ledger Entry Message
+message CreateLedgerEntryRequest {
+    string account_id = 1;
+    string entry_type = 2; // DEBIT or CREDIT
+    string amount = 3;
+    string balance_after = 4;
+}
+
+message LedgerEntry {
+    string id = 1;
+    string transaction_id = 2; // New field
+    string account_id = 3;
+    string entry_type = 4; // DEBIT or CREDIT
+    string amount = 5;
+    string balance_after = 6;
+    string status = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
+    int32 version = 10;
+}
+
+message UpdateStatusRequest {
+    string entry_id = 1;
+    string new_status = 2;
+}
+
+message GetLedgerRequest {
+    string entry_id = 1;
+}
+
+message LedgerFilter {
+    string account_id = 1;
+    string status = 2;
+}
+
+// Responses
+message LedgerEntryResponse {
+    LedgerEntry entry = 1;
+}
+
+message LedgerList {
+    repeated LedgerEntry entries = 1;
+}
+
+// Service Definition
+service LedgerService {
+    rpc CreateLedgerEntry(CreateLedgerEntryRequest) returns (LedgerEntry);
+    rpc UpdateStatus(UpdateStatusRequest) returns (LedgerEntry);
+    rpc GetLedgerEntry(GetLedgerRequest) returns (LedgerEntry);
+    rpc ListLedgerEntries(LedgerFilter) returns (LedgerList);
+}

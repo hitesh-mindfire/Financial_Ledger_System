@@ -1,0 +1,62 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: card-service-monitor
+  namespace: monitoring
+  labels:
+    team: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: card-service
+  endpoints:
+  - port: grpc
+    interval: 5s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: transaction-service-monitor
+  namespace: monitoring
+  labels:
+    team: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: transaction-service
+  endpoints:
+  - port: grpc
+    interval: 5s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ledger-service-monitor
+  namespace: monitoring
+  labels:
+    team: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: ledger-service
+  endpoints:
+  - port: grpc
+    interval: 5s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: notification-service-monitor
+  namespace: monitoring
+  labels:
+    team: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: notification-service
+  endpoints:
+  - port: grpc
+    interval: 5s

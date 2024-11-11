@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto"; // Import for google.protobuf.Empty
+option go_package = "/generated/notification_proto";
+
+// The NotificationRequest message represents a request to send a notification.
+message NotificationRequest {
+    string user_id = 1;
+    string title = 2;
+    string message = 3;
+    string type = 4;
+}
+
+// The Notification message represents a single notification.
+message Notification {
+    string id = 1;
+    string user_id = 2;
+    string title = 3;
+    string message = 4;
+    string type = 5;
+    string status = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp read_at = 8;
+}
+
+// The NotificationList message contains a list of notifications.
+message NotificationList {
+    repeated Notification notifications = 1;
+}
+
+// The WebSocketMessage message represents a message format for WebSocket communication.
+message WebSocketMessage {
+    string type = 1; // 'notification', 'balance_update', 'transaction_update'
+    Payload payload = 2;
+}
+
+// The Payload message is used as the payload for WebSocketMessage.
+message Payload {
+    string id = 1;
+    google.protobuf.Timestamp timestamp = 2;
+    string data = 3;
+}
+
+// The NotificationService service defines the methods.
+service NotificationService {
+    rpc SendNotification(NotificationRequest) returns (google.protobuf.Empty);
+    rpc GetUserNotifications(GetUserNotificationsRequest) returns (NotificationList);
+    rpc MarkAsRead(MarkAsReadRequest) returns (google.protobuf.Empty);
+    rpc SubscribeToUserEvents(SubscribeToUserEventsRequest) returns (stream WebSocketMessage);
+}
+
+// Request for getting notifications for a specific user.
+message GetUserNotificationsRequest {
+    string user_id = 1;
+}
+
+// Request for marking a notification as read.
+message MarkAsReadRequest {
+    string notification_id = 1;
+}
+
+// Request for subscribing to user events.
+message SubscribeToUserEventsRequest {
+    string user_id = 1;
+}
