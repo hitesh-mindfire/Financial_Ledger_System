@@ -48,7 +48,7 @@ func runGRPCBenchmark() {
 		runner.WithProtoFile("./proto/card.proto", []string{}),
 		runner.WithInsecure(true),
 		runner.WithConcurrency(2),
-		runner.WithTotalRequests(1000),
+		runner.WithTotalRequests(100),
 		runner.WithDataFromJSON(`{"user_id": "user-131", "credit_limit": "1000.00"}`),
 	}
 
@@ -56,7 +56,7 @@ func runGRPCBenchmark() {
 	if err != nil {
 		log.Fatalf("Failed to run gRPC benchmark: %v", err)
 	}
-
+	log.Print(report, "report")
 	totalRequests := report.Count
 	totalErrors := report.ErrorDist["Unavailable"]
 	rps := float64(totalRequests) / report.Total.Seconds()
@@ -93,7 +93,7 @@ func runNATSBenchmark() {
 	defer nc.Drain()
 
 	subject := "benchmark"
-	messageCount := 1000
+	messageCount := 100
 	messageSize := 128
 	message := make([]byte, messageSize)
 

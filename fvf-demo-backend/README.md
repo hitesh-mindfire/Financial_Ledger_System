@@ -79,6 +79,10 @@ A client or service can request card details by sending a `CardRequest` with a c
 
 ---
 
+## Architectural Diagram 
+
+<img alt="backend-architecture" src="https://res.cloudinary.com/dxf1kplcx/image/upload/v1731346715/FVF_5_yrsclp.png">
+
 # Docker Setup
 
 ## Docker Setup for Postgres
@@ -204,4 +208,43 @@ go run benchmark-setup-v1.go
 ```
 This command initiates benchmark testing to evaluate the performance metrics of the system, providing insights into throughput and latency for both gRPC and NATS-based interactions.
 
- <img alt="backend-architecture" src="https://res.cloudinary.com/dxf1kplcx/image/upload/v1731337255/FVF_1_w1fr6s.png">
+## Here are some Benchmarking Results:
+
+#### With 10 Requests
+```bash
+=== gRPC Benchmark Results ===
+Total Requests: 10
+Total Errors: 0 (0.00%)       
+Throughput: 83.02 requests/sec
+Latency (ms):
+  Min: 4.52
+  Max: 99.03
+===========================
+Starting NATS benchmark...
+
+=== NATS Benchmark Results ===
+Total Messages: 10
+Throughput: 3334.78 messages/sec
+===========================
+Benchmark completed!
+```
+
+#### With 1000 Requests
+```bash
+=== gRPC Benchmark Results ===
+Total Requests: 100
+Total Errors: 0 (0.00%)
+Throughput: 194.40 requests/sec
+Latency (ms):
+  Min: 4.52
+  Max: 88.06
+  Avg: 9.89
+===========================
+Starting NATS benchmark...
+
+=== NATS Benchmark Results ===
+Total Messages: 100
+Throughput: 20012.01 messages/sec
+===========================
+Benchmark completed!
+```
