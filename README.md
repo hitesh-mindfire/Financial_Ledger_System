@@ -183,12 +183,25 @@ kubectl port-forward svc/prometheus -n monitoring 9090:9090
 ```bash
 kubectl port-forward svc/grafana 3000:3000 -n monitoring
 ```
+### Step 6:port forwarding for nats
+```bash
+kubectl port-forward svc/nats-server 4222:4222
+```
 
 
 # Running the Project
 
-
 ## Steps
 1. Build Docker images:
 
-2. Deploy to Kubernetes: Apply each service’s deployment and service YAML files to set up networking and  scaling.
+2. Deploy to Kubernetes: Apply each service’s deployment and service YAML files to set up networking and  
+scaling.
+
+# Running Benchmark Testing
+
+After setting up the project, you can run benchmark testing by executing the following command:
+
+```bash
+go run benchmark-setup-v1.go
+```
+This command initiates benchmark testing to evaluate the performance metrics of the system, providing insights into throughput and latency for both gRPC and NATS-based interactions.
