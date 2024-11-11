@@ -199,7 +199,7 @@ scaling.
 
 # Running Benchmark Testing
 
-After setting up the project, you can run benchmark testing by executing the following command:
+After setting up the project, run benchmark testing by executing the following command:
 
 ```bash
 go run benchmark-setup-v1.go
