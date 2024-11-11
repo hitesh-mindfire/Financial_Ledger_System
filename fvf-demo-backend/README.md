@@ -140,17 +140,8 @@ docker build -t notification-service -f notification-service/Dockerfile .
 # Kubernetes Setup
 The Kubernetes configurations (YAML files) for each service should be deployed in your cluster. Apply the configurations:
 
-```bash
-kubectl apply -f ./kubernetes/card-service.yaml
-kubectl apply -f ./kubernetes/transaction-service.yaml
-kubectl apply -f ./kubernetes/ledger-service.yaml
-kubectl apply -f ./kubernetes/notification-service.yaml
-kubectl apply -f ./kubernetes/nats-server.yaml
-kubectl apply -f ./kubernetes/configmaps/envoy-config.yaml
-kubectl apply -f ./kubernetes/envoy-deployment.yaml
-```
-
 ## Running prometheus and grafana
+
 ### Step 1:Create namespace monitoring
 ```bash
 kubectl create namespace monitoring
@@ -163,6 +154,13 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 ### Step 3:Apply yaml files
 ```bash
+kubectl apply -f ./kubernetes/card-service.yaml
+kubectl apply -f ./kubernetes/transaction-service.yaml
+kubectl apply -f ./kubernetes/ledger-service.yaml
+kubectl apply -f ./kubernetes/notification-service.yaml
+kubectl apply -f ./kubernetes/nats-server.yaml
+kubectl apply -f ./kubernetes/configmaps/envoy-config.yaml
+kubectl apply -f ./kubernetes/envoy-deployment.yaml
 kubectl apply -f ./kubernetes/benchmark-service-deployment.yaml
 kubectl apply -f ./kubernetes/benchmark-service.yaml
 kubectl apply -f ./kubernetes/prometheus-configmap.yaml -n monitoring
@@ -205,3 +203,5 @@ After setting up the project, run benchmark testing by executing the following c
 go run benchmark-setup-v1.go
 ```
 This command initiates benchmark testing to evaluate the performance metrics of the system, providing insights into throughput and latency for both gRPC and NATS-based interactions.
+
+ <img alt="backend-architecture" src="https://res.cloudinary.com/dxf1kplcx/image/upload/v1731337255/FVF_1_w1fr6s.png">
