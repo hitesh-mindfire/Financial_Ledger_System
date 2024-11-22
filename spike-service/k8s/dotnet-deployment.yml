@@ -5,7 +5,7 @@ metadata:
   labels:
     app: dotnetservice
 spec:
-  replicas: 1  # Number of pods to run
+  replicas: 1
   selector:
     matchLabels:
       app: dotnetservice
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: dotnetservice
-          image: dotnetservice:latest  # Use the Docker image you built or pushed
+          image: dotnetservice:latest 
           imagePullPolicy: Never
           env:
           - name: ASPNETCORE_ENVIRONMENT
@@ -43,6 +43,6 @@ spec:
     app: dotnetservice
   ports:
     - protocol: TCP
-      port: 5001  # Expose port for HTTP
+      port: 5001 
       targetPort: 5001
-  type: ClusterIP  # This will expose your service publicly
+  type: ClusterIP  
