@@ -49,7 +49,7 @@ func runGRPCBenchmark() {
 		runner.WithInsecure(true),
 		runner.WithConcurrency(2),
 		runner.WithTotalRequests(100),
-		runner.WithDataFromJSON(`{"user_id": "user-131", "credit_limit": "1000.00"}`),
+		runner.WithDataFromJSON(`{"user_id": "user-135", "credit_limit": "1000.00"}`),
 	}
 
 	report, err := runner.Run("proto.CardService.IssueCard", "localhost:8080", options...)
@@ -149,4 +149,5 @@ func main() {
 
 	fmt.Println("Benchmark completed!")
 	fmt.Println("Check Prometheus metrics at http://localhost:9091/metrics")
+	select {}
 }

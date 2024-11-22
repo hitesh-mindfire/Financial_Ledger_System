@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golang-service
+  template:
+    metadata:
+      labels:
+        app: golang-service
+    spec:
+      containers:
+      - name: golang-service
+        image: golang-service:latest
+        ports:
+        - containerPort: 5002
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2"
+            memory: "2Gi"  
+        imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golang-service
+spec:
+  selector:
+    app: golang-service
+  ports:
+  - port: 5002
+    targetPort: 5002
+  type: ClusterIP

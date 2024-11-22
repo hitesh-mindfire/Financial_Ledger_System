@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package spike;
+option go_package = "./spike";
+option csharp_namespace = "DotnetService";
+
+service SpikeService {
+    rpc TriggerSpike (SpikeRequest) returns (SpikeResponse);
+}
+
+message SpikeRequest {
+    int32 cpu_intensity = 1;
+    int32 memory_mb = 2;
+}
+
+message SpikeResponse {
+    bool success = 1;
+    string message = 2;
+}

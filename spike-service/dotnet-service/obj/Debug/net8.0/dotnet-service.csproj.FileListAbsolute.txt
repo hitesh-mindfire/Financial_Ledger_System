@@ -1,0 +1,6 @@
+D:\microservices-demo\dotnet-service\obj\Debug\net8.0\dotnet-service.csproj.AssemblyReference.cache
+D:\microservices-demo\dotnet-service\obj\Debug\net8.0\dotnet-service.GeneratedMSBuildEditorConfig.editorconfig
+D:\microservices-demo\dotnet-service\obj\Debug\net8.0\dotnet-service.AssemblyInfoInputs.cache
+D:\microservices-demo\dotnet-service\obj\Debug\net8.0\dotnet-service.AssemblyInfo.cs
+D:\microservices-demo\dotnet-service\obj\Debug\net8.0\dotnet-service.csproj.CoreCompileInputs.cache
+D:\microservices-demo\dotnet-service\obj\Debug\net8.0\dotnet-service.MvcApplicationPartsAssemblyInfo.cache

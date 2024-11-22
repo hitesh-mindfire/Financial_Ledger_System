@@ -1,0 +1,2 @@
+obj\Release\net8.0/Spike.cs \
+obj\Release\net8.0/SpikeGrpc.cs: ../proto/spike.proto
