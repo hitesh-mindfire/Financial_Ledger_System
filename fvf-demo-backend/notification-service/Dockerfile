@@ -17,7 +17,9 @@ FROM alpine:3.14
 WORKDIR /root/
 
 COPY --from=builder /app/notification-service .
+
 COPY .env ./
+
 RUN chmod +x /root/notification-service
 
 # Expose gRPC port

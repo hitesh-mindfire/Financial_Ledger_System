@@ -12,6 +12,11 @@ RUN go mod download
 COPY generated/ ./generated/
 COPY card-service/ ./
 
+# Copy the additional folders (config, db, nats) from the root directory
+COPY config/ ./config/
+COPY db/ ./db/
+COPY nats/ ./nats/
+
 # Build the Go application
 RUN go build -o card-service .
 
@@ -22,9 +27,11 @@ FROM alpine:3.14
 WORKDIR /root/
 
 # Copy the built binary from the builder stage
-COPY --from=builder /app/card-service .
+COPY --from=builder /app/card-service ./
 
+# Copy .env file
 COPY .env ./
+
 # Ensure the binary is executable
 RUN chmod +x /root/card-service
 
@@ -32,4 +39,4 @@ RUN chmod +x /root/card-service
 EXPOSE 8080
 
 # Define the command to run the app
-CMD ["./card-service"]
+CMD ["./card-service"] 
