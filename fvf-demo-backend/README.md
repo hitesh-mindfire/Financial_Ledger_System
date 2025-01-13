@@ -211,12 +211,30 @@ kubectl port-forward svc/nats-server 4222:4222
 
 ## Steps
 
-1. Install Golang
+1. Build Docker images:
 
-2. Build Docker images:
-
-3. Deploy to Kubernetes: Apply each service’s deployment and service YAML files to set up networking and  
+2. Deploy to Kubernetes: Apply each service’s deployment and service YAML files to set up networking and  
    scaling.
+
+## Install Golang (Optional)
+
+### You only need to install Golang if you plan to edit the code for the Go-based services (Card Service, Transaction Service, Ledger Service). Otherwise, this step is not required as the services are already containerized.
+
+### [Download Golang from the official Go website](https://golang.org/dl/).
+
+Install Golang by following the installation instructions for your operating system.
+
+## Verify Installation:
+
+```bash
+go version
+```
+
+## Set Up Go Modules (if editing code)
+
+```bash
+go mod tidy
+```
 
 # Running Benchmark Testing
 
