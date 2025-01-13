@@ -47,7 +47,7 @@ A client or service can request card details by sending a `CardRequest` with a c
 1. Receives a request to process a new transaction.
 2. Calls the Card Service’s `GetCard` RPC to verify card details.
 3. Publishes a message to the NATS `transaction.created` subject with transaction information (e.g., amount, card ID).
-   
+
 ### 3. Ledger Service
 
 - **Purpose**: Maintains a financial ledger that records all transaction entries, ensuring an accurate and up-to-date balance sheet for each card.
@@ -79,7 +79,7 @@ A client or service can request card details by sending a `CardRequest` with a c
 
 ---
 
-## Architectural Diagram 
+## Architectural Diagram
 
 <img alt="backend-architecture" src="https://res.cloudinary.com/dxf1kplcx/image/upload/v1731346715/FVF_5_yrsclp.png">
 
@@ -88,16 +88,19 @@ A client or service can request card details by sending a `CardRequest` with a c
 ## Docker Setup for Postgres
 
 ### Steps 1 : go to postgres-k8s folder
+
 ```bash
 cd postgres-k8s
 ```
 
 ### Steps 2 : Make docker image
+
 ```bash
 docker build -t custom-postgres-image .
 ```
 
 ### Steps 3 : Run kubernetes yaml files
+
 ```bash
 kubectl apply -f kubernetes/postgres-configmap.yaml
 kubectl apply -f kubernetes/postgres-secret.yaml
@@ -107,27 +110,34 @@ kubectl apply -f kubernetes/postgres-service.yaml
 ```
 
 ### Step 4: Restore Database from backup.sql file
+
 #### step 1: get podname for postgres
+
 ```bash
 kubectl get pods
 ```
 
 #### step 2: copy the backup file into the pod using kubectl cp
+
 ```bash
 kubectl cp backup.sql <postgres-pod-name>:/tmp/backup.sql
 ```
+
 #### step 3: Execute the restore command:
+
 ```bash
 kubectl exec -it <postgres-pod-name> -- psql -U postgres -d Financial_ledger_db -f /tmp/backup.sql
 ```
+
 #### step 4: Verify the Data(Optional)
+
 ```bash
 kubectl exec -it <postgres-pod-name> -- psql -U postgres -d Financial_ledger_db
 ```
+
 ```sql
 Run \dt
 ```
-
 
 ## Docker Setup for Services
 
@@ -140,23 +150,26 @@ docker build -t ledger-service -f ledger-service/Dockerfile .
 docker build -t notification-service -f notification-service/Dockerfile .
 ```
 
-
 # Kubernetes Setup
+
 The Kubernetes configurations (YAML files) for each service should be deployed in your cluster. Apply the configurations:
 
 ## Running prometheus and grafana
 
 ### Step 1:Create namespace monitoring
+
 ```bash
 kubectl create namespace monitoring
 ```
 
 ### Step 2:Download crds
+
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/bundle.yaml
 ```
 
 ### Step 3:Apply yaml files
+
 ```bash
 kubectl apply -f ./kubernetes/card-service.yaml
 kubectl apply -f ./kubernetes/transaction-service.yaml
@@ -172,32 +185,38 @@ kubectl apply -f ./kubernetes/node-exporter.yaml -n monitoring
 kubectl apply -f ./kubernetes/node-exporter-services.yaml -n monitoring
 kubectl apply -f ./kubernetes/node-exporter-deployment.yaml -n monitoring
 kubectl apply -f ./kubernetes/prometheus-deployment.yaml -n monitoring
-kubectl apply -f ./kubernetes/prometheus.yaml -n monitoring
 kubectl apply -f ./kubernetes/grafana.yaml -n monitoring
 kubectl apply -f ./kubernetes/service-monitors.yaml -n monitoring
 ```
 
 ### Step 4:port forwarding for prometheus
+
 ```bash
 kubectl port-forward svc/prometheus -n monitoring 9090:9090
 ```
+
 ### Step 5:port forwarding for grafana
+
 ```bash
 kubectl port-forward svc/grafana 3000:3000 -n monitoring
 ```
+
 ### Step 6:port forwarding for nats
+
 ```bash
 kubectl port-forward svc/nats-server 4222:4222
 ```
 
-
 # Running the Project
 
 ## Steps
-1. Build Docker images:
 
-2. Deploy to Kubernetes: Apply each service’s deployment and service YAML files to set up networking and  
-scaling.
+1. Install Golang
+
+2. Build Docker images:
+
+3. Deploy to Kubernetes: Apply each service’s deployment and service YAML files to set up networking and  
+   scaling.
 
 # Running Benchmark Testing
 
@@ -206,15 +225,17 @@ After setting up the project, run benchmark testing by executing the following c
 ```bash
 go run benchmark-setup-v1.go
 ```
+
 This command initiates benchmark testing to evaluate the performance metrics of the system, providing insights into throughput and latency for both gRPC and NATS-based interactions.
 
 ## Here are some Benchmarking Results:
 
 #### With 10 Requests
+
 ```bash
 === gRPC Benchmark Results ===
 Total Requests: 10
-Total Errors: 0 (0.00%)       
+Total Errors: 0 (0.00%)
 Throughput: 83.02 requests/sec
 Latency (ms):
   Min: 4.52
@@ -230,6 +251,7 @@ Benchmark completed!
 ```
 
 #### With 1000 Requests
+
 ```bash
 === gRPC Benchmark Results ===
 Total Requests: 100
