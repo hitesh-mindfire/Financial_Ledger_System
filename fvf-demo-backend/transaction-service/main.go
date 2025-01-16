@@ -54,7 +54,7 @@ type TransactionUpdateResponse struct {
 	ReferenceNumber string `json:"reference_number"`
 	CreatedAt       string `json:"created_at"`
 	UpdatedAt       string `json:"updated_at"`
-	SettledAt       string `json:"settled_at,omitempty"` // Optional field, use omitempty to skip if nil
+	SettledAt       string `json:"settled_at,omitempty"`
 }
 type TxnList struct {
 	Transactions []*TransactionUpdateResponse

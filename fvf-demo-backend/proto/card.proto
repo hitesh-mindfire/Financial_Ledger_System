@@ -10,101 +10,94 @@ message Decimal1 {
 }
 
 message Merchant {
-    string id = 1; // Unique identifier for the merchant
-    string name = 2; // Name of the merchant
-    string category = 3; // Category of the merchant (e.g., grocery, electronics)
+    string id = 1;
+    string name = 2;
+    string category = 3;
 }
 
-// The Card message defines the structure of a card
 message Card {
-    string id = 1; // Unique identifier for the card
-    string user_id = 2; // User associated with the card
-    string status = 3; // Status of the card (active, inactive, etc.)
-    string credit_limit = 4; // Credit limit as a decimal
-    string card_number = 5; // Card number (managed by backend)
+    string id = 1;
+    string user_id = 2;
+    string status = 3;
+    string credit_limit = 4;
+    string card_number = 5;
     string available_balance = 6;
-    google.protobuf.Timestamp issued_at = 7; // Timestamp of when the card was issued
+    string cvv = 7;
+    google.protobuf.Timestamp issued_at = 8;
     string expiry_date = 9;
 }
 
 message CardResponse {
-    string id = 1; // Unique identifier for the card
-    string user_id = 2; // User associated with the card
-    string status = 3; // Status of the card (active, inactive, etc.)
-    string credit_limit = 4; // Credit limit as a decimal
-    string card_number = 5; // Card number (managed by backend)
+    string id = 1;
+    string user_id = 2;
+    string status = 3;
+    string credit_limit = 4;
+    string card_number = 5;
     string available_balance = 6;
-    google.protobuf.Timestamp issued_at = 7; // Timestamp of when the card was issued
+    string cvv = 7;
+    google.protobuf.Timestamp issued_at = 8;
     string expiry_date = 9;
 }
 
-// Request to issue a new card
 message IssueCardRequest {
-    string user_id = 1; // User ID for whom the card is issued
-    string credit_limit = 2; // Desired credit limit for the new card
+    string user_id = 1;
+    string credit_limit = 2;
 }
 
-// Request to authorize a transaction
 message AuthRequest {
-    string card_id = 1; // Card ID to authorize transaction on
-    string amount = 2; // Amount to be authorized
+    string card_id = 1;
+    string amount = 2;
 }
 
-// Response for transaction authorization
 message AuthResponse {
-    bool authorized = 1; // Whether the transaction is authorized
-    string transaction_id = 2; // ID of the transaction if authorized
+    bool authorized = 1;
+    string transaction_id = 2;
 }
 
-// Request to update card limit
 message UpdateLimitRequest {
-    string card_id = 1; // Card ID whose limit is to be updated
-    string new_limit = 2; // New credit limit to set
+    string card_id = 1;
+    string new_limit = 2;
 }
 
-// Request to get the balance of a specific card
 message GetBalanceRequest {
-    string card_id = 1; // Card ID for which to retrieve the balance
+    string card_id = 1;
 }
 
-// Response for getting balance, containing both Balance and Credit_limit
 message GetBalanceResponse {
     Balance balance = 1;
     Credit_limit credit_limit = 2;
 }
 
 message Balance {
-    string card_id = 1; // Card ID
-    string current_balance = 2; // Current balance
+    string card_id = 1;
+    string current_balance = 2;
 }
 
 message Credit_limit {
-    string card_id = 1; // Card ID
-    string credit_limit = 2; // Current balance
+    string card_id = 1;
+    string credit_limit = 2;
 }
 
-// CardEvents defines the events related to card operations
 message CardEvents {
     message Issued {
-        string card_id = 1; // ID of the card issued
-        string user_id = 2; // ID of the user the card is issued to
-        string credit_limit = 3; // Credit limit for the issued card
-        google.protobuf.Timestamp issued_at = 4; // Timestamp of the issuance
+        string card_id = 1;
+        string user_id = 2;
+        string credit_limit = 3;
+        google.protobuf.Timestamp issued_at = 4;
     }
 
     message TransactionAuthorized {
-        string card_id = 1; // ID of the card used for the transaction
-        string transaction_id = 2; // Unique identifier for the transaction
-        string amount = 3; // Amount authorized
-        Merchant merchant = 4; // Merchant details for the transaction
-        google.protobuf.Timestamp authorized_at = 5; // Timestamp of the authorization
+        string card_id = 1;
+        string transaction_id = 2;
+        string amount = 3;
+        Merchant merchant = 4;
+        google.protobuf.Timestamp authorized_at = 5;
     }
 }
 
-// CardService defines the card-related service
 service CardService {
     rpc IssueCard(IssueCardRequest) returns (Card);
     rpc AuthorizeTransaction(AuthRequest) returns (AuthResponse);
     rpc UpdateLimit(UpdateLimitRequest) returns (Card);
-    rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse); // Updated to use GetBalanceResponse
+    rpc GetBalance(GetBalanceRequest) returns (Balance);
 }

@@ -79,6 +79,7 @@ func NewCardService(db *sql.DB, nats *nats.Conn, ledgerClient ledgerpb.LedgerSer
 
 func (s *CardService) IssueCard(ctx context.Context, req *pb.IssueCardRequest) (*pb.Card, error) {
 	expiryDate := time.Now().AddDate(5, 0, 0)
+	cvv := fmt.Sprintf("%03d", rand.Intn(1000))
 	log.Print("card-service called")
 	card := &pb.Card{
 		Id:               generateCardID(),
@@ -86,15 +87,16 @@ func (s *CardService) IssueCard(ctx context.Context, req *pb.IssueCardRequest) (
 		Status:           "active",
 		CreditLimit:      req.CreditLimit,
 		CardNumber:       generateCardNumber(),
-		AvailableBalance: req.CreditLimit,
+		AvailableBalance: "0",
+		Cvv:              cvv,
 		ExpiryDate:       timestamppb.New(expiryDate).String(),
 	}
 
 	// Save card details to the database
 	_, err := s.db.ExecContext(ctx, `
-        INSERT INTO cards (id, user_id, status, credit_limit, card_number, available_balance, expiry_date) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-		card.Id, card.UserId, card.Status, card.CreditLimit, card.CardNumber, card.AvailableBalance, expiryDate,
+        INSERT INTO cards (id, user_id, status, credit_limit, card_number, available_balance, expiry_date,cvv) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7,$8)`,
+		card.Id, card.UserId, card.Status, card.CreditLimit, card.CardNumber, card.AvailableBalance, expiryDate, cvv,
 	)
 	log.Print("card")
 	if err != nil {
@@ -126,6 +128,19 @@ func (s *CardService) IssueCard(ctx context.Context, req *pb.IssueCardRequest) (
 		return nil, errors.New("failed to create ledger entry")
 	}
 	log.Printf("Ledger entry created successfully: %+v", ledgerEntry)
+	txnReq := &transactionpb.CreateTxnRequest{
+		CardId:   card.Id,
+		Amount:   "200",
+		Currency: "INR",
+		Type:     "CREDIT",
+	}
+
+	_, err = s.transactionClient.CreateTransaction(ctx, txnReq)
+	if err != nil {
+		log.Printf("Failed to create initial transaction: %v", err)
+		return nil, errors.New("failed to load initial amount")
+	}
+
 	return card, nil
 }
 
@@ -177,7 +192,6 @@ func (s *CardService) UpdateLimit(ctx context.Context, req *pb.UpdateLimitReques
 }
 
 func (s *CardService) GetBalance(ctx context.Context, req *pb.GetBalanceRequest) (*pb.Balance, error) {
-	// Call the existing implementation by extracting the card ID from the request
 	return s.getBalance(ctx, req.CardId)
 }
 
@@ -187,7 +201,7 @@ func (s *CardService) getBalance(ctx context.Context, cardID string) (*pb.Balanc
 		return nil, err
 	}
 	log.Print(credit_limit)
-	trimmedBalance := strings.TrimSpace(balance) // Remove any extraneous whitespace
+	trimmedBalance := strings.TrimSpace(balance)
 	if _, parseErr := strconv.ParseFloat(trimmedBalance, 64); parseErr != nil {
 		log.Printf("Error parsing trimmed balance to float: %v. Balance value: %s", parseErr, trimmedBalance)
 		return nil, errors.New("invalid balance format")
@@ -222,10 +236,6 @@ func (s *CardService) GetCardByID(ctx context.Context, cardID string) (*pb.Card,
 }
 
 func generateCardID() string {
-	return uuid.New().String()
-}
-
-func generateTransactionID() string {
 	return uuid.New().String()
 }
 
