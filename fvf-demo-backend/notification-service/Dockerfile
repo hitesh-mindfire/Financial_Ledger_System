@@ -9,7 +9,9 @@ RUN go mod download
 COPY generated/ ./generated/
 
 COPY notification-service/ .
-
+COPY config/ ./config/
+COPY db/ ./db/
+COPY nats/ ./nats/
 RUN go build -o notification-service .
 
 FROM alpine:3.14

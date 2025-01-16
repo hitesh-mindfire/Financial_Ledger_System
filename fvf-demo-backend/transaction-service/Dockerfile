@@ -16,6 +16,7 @@ COPY transaction-service/ ./
 COPY config/ ./config/
 COPY db/ ./db/
 COPY nats/ ./nats/
+COPY utils/ ./utils/
 
 # Build the Go application
 RUN go build -o transaction-service .
