@@ -12,6 +12,8 @@ import (
 
 	nat "card-service-backend/nats"
 
+	"net/http"
+
 	"github.com/gorilla/websocket"
 	"github.com/nats-io/nats.go"
 )
@@ -47,7 +49,7 @@ type WebSocketMessage struct {
 	Payload struct {
 		ID        string      `json:"id"`
 		Timestamp string      `json:"timestamp"`
-		Data      interface{} `json:"data"`
+		Data      interface{} `json:"data"` // Actual data to send
 	} `json:"payload"`
 }
 
@@ -67,9 +69,8 @@ func NewNotificationService(db *sql.DB) *NotificationService {
 }
 
 func (s *NotificationService) LogEvent(ctx context.Context, eventType, message string) error {
-
 	_, err := s.db.ExecContext(ctx, `
-        INSERT INTO notifications (event_type,event_data)
+        INSERT INTO notifications (event_type, event_data)
         VALUES ($1, $2)`,
 		eventType, message)
 	if err != nil {
@@ -79,8 +80,29 @@ func (s *NotificationService) LogEvent(ctx context.Context, eventType, message s
 	return nil
 }
 
-func main() {
+// WebSocket handler to accept WebSocket connections
+func (s *NotificationService) handleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
+	upgrader := websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true // Allow all origins, modify as needed
+		},
+	}
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("WebSocket Upgrade failed:", err)
+		return
+	}
+	defer conn.Close()
 
+	// Handle WebSocket communication here
+	s.connMutex.Lock()
+	s.connections[conn.RemoteAddr().String()] = conn
+	s.connMutex.Unlock()
+
+	log.Printf("New WebSocket connection from %s", conn.RemoteAddr())
+}
+
+func main() {
 	fmt.Println("Notification Service listening for events...")
 
 	cfg := config.LoadConfig()
@@ -92,6 +114,14 @@ func main() {
 	defer nc.Close()
 
 	notificationService := NewNotificationService(dbConn)
+
+	// Setup WebSocket server
+	http.HandleFunc("/ws", notificationService.handleWebSocketConnection)
+	go func() {
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			log.Fatalf("WebSocket server failed to start: %v", err)
+		}
+	}()
 
 	if _, err := nc.Subscribe("card.issued", func(m *nats.Msg) {
 		fmt.Printf("Received card issuance notification: %s\n", string(m.Data))
