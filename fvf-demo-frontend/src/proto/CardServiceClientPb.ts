@@ -8,7 +8,7 @@
 // versions:
 // 	protoc-gen-grpc-web v1.5.0
 // 	protoc              v5.28.3
-// source: proto/card.proto
+// source: card.proto
 
 
 /* eslint-disable */
@@ -17,7 +17,7 @@
 
 import * as grpcWeb from 'grpc-web';
 
-import * as proto_card_pb from './card_pb'; // proto import: "proto/card.proto"
+import * as card_pb from './card_pb'; // proto import: "card.proto"
 
 
 export class CardServiceClient {
@@ -42,29 +42,29 @@ export class CardServiceClient {
   methodDescriptorIssueCard = new grpcWeb.MethodDescriptor(
     '/proto.CardService/IssueCard',
     grpcWeb.MethodType.UNARY,
-    proto_card_pb.IssueCardRequest,
-    proto_card_pb.Card,
-    (request: proto_card_pb.IssueCardRequest) => {
+    card_pb.IssueCardRequest,
+    card_pb.Card,
+    (request: card_pb.IssueCardRequest) => {
       return request.serializeBinary();
     },
-    proto_card_pb.Card.deserializeBinary
+    card_pb.Card.deserializeBinary
   );
 
   issueCard(
-    request: proto_card_pb.IssueCardRequest,
-    metadata?: grpcWeb.Metadata | null): Promise<proto_card_pb.Card>;
+    request: card_pb.IssueCardRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<card_pb.Card>;
 
   issueCard(
-    request: proto_card_pb.IssueCardRequest,
+    request: card_pb.IssueCardRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: proto_card_pb.Card) => void): grpcWeb.ClientReadableStream<proto_card_pb.Card>;
+               response: card_pb.Card) => void): grpcWeb.ClientReadableStream<card_pb.Card>;
 
   issueCard(
-    request: proto_card_pb.IssueCardRequest,
+    request: card_pb.IssueCardRequest,
     metadata?: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: proto_card_pb.Card) => void) {
+               response: card_pb.Card) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -85,29 +85,29 @@ export class CardServiceClient {
   methodDescriptorAuthorizeTransaction = new grpcWeb.MethodDescriptor(
     '/proto.CardService/AuthorizeTransaction',
     grpcWeb.MethodType.UNARY,
-    proto_card_pb.AuthRequest,
-    proto_card_pb.AuthResponse,
-    (request: proto_card_pb.AuthRequest) => {
+    card_pb.AuthRequest,
+    card_pb.AuthResponse,
+    (request: card_pb.AuthRequest) => {
       return request.serializeBinary();
     },
-    proto_card_pb.AuthResponse.deserializeBinary
+    card_pb.AuthResponse.deserializeBinary
   );
 
   authorizeTransaction(
-    request: proto_card_pb.AuthRequest,
-    metadata?: grpcWeb.Metadata | null): Promise<proto_card_pb.AuthResponse>;
+    request: card_pb.AuthRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<card_pb.AuthResponse>;
 
   authorizeTransaction(
-    request: proto_card_pb.AuthRequest,
+    request: card_pb.AuthRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: proto_card_pb.AuthResponse) => void): grpcWeb.ClientReadableStream<proto_card_pb.AuthResponse>;
+               response: card_pb.AuthResponse) => void): grpcWeb.ClientReadableStream<card_pb.AuthResponse>;
 
   authorizeTransaction(
-    request: proto_card_pb.AuthRequest,
+    request: card_pb.AuthRequest,
     metadata?: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: proto_card_pb.AuthResponse) => void) {
+               response: card_pb.AuthResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -128,29 +128,29 @@ export class CardServiceClient {
   methodDescriptorUpdateLimit = new grpcWeb.MethodDescriptor(
     '/proto.CardService/UpdateLimit',
     grpcWeb.MethodType.UNARY,
-    proto_card_pb.UpdateLimitRequest,
-    proto_card_pb.Card,
-    (request: proto_card_pb.UpdateLimitRequest) => {
+    card_pb.UpdateLimitRequest,
+    card_pb.Card,
+    (request: card_pb.UpdateLimitRequest) => {
       return request.serializeBinary();
     },
-    proto_card_pb.Card.deserializeBinary
+    card_pb.Card.deserializeBinary
   );
 
   updateLimit(
-    request: proto_card_pb.UpdateLimitRequest,
-    metadata?: grpcWeb.Metadata | null): Promise<proto_card_pb.Card>;
+    request: card_pb.UpdateLimitRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<card_pb.Card>;
 
   updateLimit(
-    request: proto_card_pb.UpdateLimitRequest,
+    request: card_pb.UpdateLimitRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: proto_card_pb.Card) => void): grpcWeb.ClientReadableStream<proto_card_pb.Card>;
+               response: card_pb.Card) => void): grpcWeb.ClientReadableStream<card_pb.Card>;
 
   updateLimit(
-    request: proto_card_pb.UpdateLimitRequest,
+    request: card_pb.UpdateLimitRequest,
     metadata?: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: proto_card_pb.Card) => void) {
+               response: card_pb.Card) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -171,29 +171,29 @@ export class CardServiceClient {
   methodDescriptorGetBalance = new grpcWeb.MethodDescriptor(
     '/proto.CardService/GetBalance',
     grpcWeb.MethodType.UNARY,
-    proto_card_pb.GetBalanceRequest,
-    proto_card_pb.Balance,
-    (request: proto_card_pb.GetBalanceRequest) => {
+    card_pb.GetBalanceRequest,
+    card_pb.Balance,
+    (request: card_pb.GetBalanceRequest) => {
       return request.serializeBinary();
     },
-    proto_card_pb.Balance.deserializeBinary
+    card_pb.Balance.deserializeBinary
   );
 
   getBalance(
-    request: proto_card_pb.GetBalanceRequest,
-    metadata?: grpcWeb.Metadata | null): Promise<proto_card_pb.Balance>;
+    request: card_pb.GetBalanceRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<card_pb.Balance>;
 
   getBalance(
-    request: proto_card_pb.GetBalanceRequest,
+    request: card_pb.GetBalanceRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: proto_card_pb.Balance) => void): grpcWeb.ClientReadableStream<proto_card_pb.Balance>;
+               response: card_pb.Balance) => void): grpcWeb.ClientReadableStream<card_pb.Balance>;
 
   getBalance(
-    request: proto_card_pb.GetBalanceRequest,
+    request: card_pb.GetBalanceRequest,
     metadata?: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: proto_card_pb.Balance) => void) {
+               response: card_pb.Balance) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +

@@ -28,8 +28,6 @@ const (
 // CardServiceClient is the client API for CardService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// CardService defines the card-related service
 type CardServiceClient interface {
 	IssueCard(ctx context.Context, in *IssueCardRequest, opts ...grpc.CallOption) (*Card, error)
 	AuthorizeTransaction(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
@@ -88,8 +86,6 @@ func (c *cardServiceClient) GetBalance(ctx context.Context, in *GetBalanceReques
 // CardServiceServer is the server API for CardService service.
 // All implementations must embed UnimplementedCardServiceServer
 // for forward compatibility.
-//
-// CardService defines the card-related service
 type CardServiceServer interface {
 	IssueCard(context.Context, *IssueCardRequest) (*Card, error)
 	AuthorizeTransaction(context.Context, *AuthRequest) (*AuthResponse, error)

@@ -6,7 +6,7 @@ import {
   Card as CardProto,
   IssueCardRequest,
   CardResponse,
-  GetBalanceRequest
+  GetBalanceRequest,
 } from "../proto/card_pb";
 import {
   Dialog,
@@ -22,8 +22,9 @@ import { TxnFilter, TxnList1 } from "../proto/transaction_pb";
 
 // Instantiate the gRPC client
 const cardService = new CardServiceClient("http://localhost:8080", null, null);
-const transactionService = new TransactionServiceClient("http://localhost:8080"); 
-
+const transactionService = new TransactionServiceClient(
+  "http://localhost:8080"
+);
 
 // Interface for CardTemplate props
 interface CardTemplateProps {
@@ -46,8 +47,6 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
   const [isCreditDialogOpen, setIsCreditDialogOpen] = useState<boolean>(false);
   const [isDebitDialogOpen, setIsDebitDialogOpen] = useState<boolean>(false);
 
-
-
   // Load the initial state from localStorage if it exists
   useEffect(() => {
     const storedCardData = localStorage.getItem("cardData");
@@ -59,7 +58,6 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
     }
     fetchBalance();
     fetchDebitTotal();
-   
   }, []);
 
   const fetchBalance = () => {
@@ -74,7 +72,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
 
     cardService.getBalance(request, {}, (err, response) => {
       if (err) {
-        setError('Failed to fetch balance');
+        setError("Failed to fetch balance");
         setLoading(false);
       } else {
         const currentBalance = response?.getCurrentBalance();
@@ -88,7 +86,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
     // Create the request object
     const request = new IssueCardRequest();
     request.setUserId("newUser");
-    request.setCreditLimit("500");
+    request.setCreditLimit("10000");
 
     // Make the gRPC request to issue a card
     cardService.issueCard(
@@ -97,12 +95,13 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
       (err: grpcWeb.RpcError | null, response: CardResponse | null) => {
         if (err) {
           setError(`Error: ${err.message}`);
-          console.error(err);
+          console.log(err, "abc");
           return;
         }
 
         if (response) {
           const cardData = response.toObject();
+          console.log(cardData);
           setCardData(cardData);
           setIsCardIssued(true);
           setError(null); // Clear any previous errors
@@ -111,88 +110,103 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
           localStorage.setItem("cardData", JSON.stringify(cardData));
           localStorage.setItem("isCardIssued", JSON.stringify(true));
           fetchBalance();
+          onTransactionsUpdated();
         }
       }
     );
   };
   // Extract seconds and nanos from the string
   const regex = /seconds:(\d+) nanos:(\d+)/;
-  const match = cardData?.expiryDate.match(regex);
+  const match = cardData?.expiryDate.match(/seconds:(\d+)\s+nanos:(\d+)/);
   let formattedDate = "MM/YY"; // Default value
 
   if (match) {
-    const seconds = parseInt(match[1]);
-    const nanos = parseInt(match[2]);
+    const seconds = parseInt(match[1], 10); // Extracted seconds
+    const nanos = parseInt(match[2], 10); // Extracted nanos (not used in this example)
 
-    // Convert to a JavaScript Date object
+    // Convert seconds to milliseconds
+    const expiryDateMillis = seconds * 1000;
+
+    // Create a JavaScript Date object
+    const date = new Date(expiryDateMillis);
     const timestamp = new Date(seconds * 1000 + nanos / 1e6); // Convert to milliseconds
 
-    // Format the date as MM/YY
     formattedDate = timestamp
       .toLocaleDateString("en-GB", { month: "2-digit", year: "2-digit" })
       .replace("/", "/");
   }
 
-  // Create transaction
-   const handleTransaction = (transactionType: "CREDIT" | "DEBIT") => {
-     if (!cardData) {
-     setError("Card data is missing.");
-     return;
+  const handleTransaction = (transactionType: "CREDIT" | "DEBIT") => {
+    if (!cardData) {
+      setError("Card data is missing.");
+      return;
     }
-   const request = new CreateTxnRequest();
+
+    const request = new CreateTxnRequest();
     request.setCardId(cardData.id);
-   request.setMerchantId("merchant1"); // Hardcoded merchant ID as requested
-   request.setAmount(amount.toString());
+    request.setMerchantId("merchant1"); // Hardcoded merchant ID as requested
+    request.setAmount(amount.toString());
     request.setCurrency("INR");
-   request.setType(transactionType);
-     transactionService.createTransaction(request, {}, (err, response) => {
-   if (err) {
-    setError(`Transaction failed: ${err.message}`);
-    } else {
-     setError('');
-    alert(`${transactionType.charAt(0).toUpperCase() + transactionType.slice(1)} transaction successful!`);
-    fetchBalance();
-      fetchDebitTotal();
+    request.setType(transactionType);
+
+    transactionService.createTransaction(request, {}, (err, response) => {
+      if (!!err) {
+        // Show an alert for the error and close the modal
+        alert(`Error: ${err.message}`);
+
+        // Map the error message to a user-friendly one if needed
+        setError(err.message);
+      } else {
+        setError("");
+        alert(
+          `${
+            transactionType.charAt(0).toUpperCase() + transactionType.slice(1)
+          } transaction successful!`
+        );
+        fetchBalance();
+        fetchDebitTotal();
+      }
+
       onTransactionsUpdated();
+
       if (transactionType === "CREDIT") {
         setIsCreditDialogOpen(false);
       } else if (transactionType === "DEBIT") {
         setIsDebitDialogOpen(false);
       }
-     }
-   });
-     };
+    });
+  };
 
-     const fetchDebitTotal = async () => {
-      const storedCardData = localStorage.getItem("cardData");
-      if (!storedCardData) {
-        console.error("No card data found in local storage.");
-        setDebitTotal(0);
-        return;
-      }
-    
-      const cardData = JSON.parse(storedCardData);
-      const txnFilter = new TxnFilter();
-      txnFilter.setCardId(cardData.id);
-      txnFilter.setStatus("success");
-    
-      transactionService.listTransactions(txnFilter, {}, (err: grpcWeb.RpcError, response: TxnList1) => {
+  const fetchDebitTotal = async () => {
+    const storedCardData = localStorage.getItem("cardData");
+    if (!storedCardData) {
+      console.error("No card data found in local storage.");
+      setDebitTotal(0);
+      return;
+    }
+
+    const cardData = JSON.parse(storedCardData);
+    const txnFilter = new TxnFilter();
+    txnFilter.setCardId(cardData.id);
+    txnFilter.setStatus("success");
+
+    transactionService.listTransactions(
+      txnFilter,
+      {},
+      (err: grpcWeb.RpcError, response: TxnList1) => {
         if (err) {
           console.error("Failed to fetch transactions", err);
           return;
         }
-    
+
         const transactions = response.getTransactionsList();
         const debitAmount = transactions
           .filter((txn) => txn.getType() === "DEBIT")
           .reduce((sum, txn) => sum + parseFloat(txn.getAmount()), 0);
         setDebitTotal(debitAmount);
-      });
-    };
-    
-
-
-
+      }
+    );
+  };
   const CardTemplate: React.FC<CardTemplateProps> = ({ isTemplate }) => (
     <Card
       className={`md:row-span-2 ${
@@ -243,10 +257,18 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
               : cardData?.cardNumber || "4532 •••• •••• 1234"}
           </div>
         </div>
-        <div>
-          <div className="text-xs opacity-75 mb-1">EXPIRES</div>
-          <div className="font-medium">
-            {isTemplate ? "MM/YY" : formattedDate || "12/25"}
+        <div className="flex justify-between">
+          <div>
+            <div className="text-xs opacity-75 mb-1">EXPIRES</div>
+            <div className="font-medium mb-4">
+              {isTemplate ? "MM/YY" : formattedDate || "12/25"}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs opacity-75 mb-1">CVV</div>
+            <div className="font-medium">
+              {isTemplate ? "XXX" : cardData?.cvv || "123"}
+            </div>
           </div>
         </div>
       </CardContent>
@@ -275,47 +297,79 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
             </svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-            {balance}
-            </div>
+            <div className="text-2xl font-bold">{balance}</div>
             <div className="flex mt-4 space-x-2">
-            <Dialog open={isCreditDialogOpen} onOpenChange={setIsCreditDialogOpen}>
-<DialogTrigger>
-<button className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700" type="button" disabled={!isCardIssued}>
- Credit
- </button>
- </DialogTrigger>
- <DialogContent>
-<DialogHeader>
-<DialogTitle>Credit Transaction</DialogTitle>
-<DialogDescription>
- <div>
-<input type="number" placeholder="Amount" onChange={(e) => setAmount(Number(e.target.value))} className="px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 mb-3"/>
-</div>
- <button onClick={() => handleTransaction("CREDIT")} className=" bg-indigo-600 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2"
-            type="button">Confirm Payment</button>
- </DialogDescription>
- </DialogHeader>
-</DialogContent>
-</Dialog>
- <Dialog open={isDebitDialogOpen} onOpenChange={setIsDebitDialogOpen}>
-<DialogTrigger>
-<button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" type="button" disabled={!isCardIssued}>
-Debit
-</button>
-</DialogTrigger>
-<DialogContent>
-<DialogHeader>
- <DialogTitle>Debit Transaction</DialogTitle>
- <DialogDescription>
-<div>
-<input type="number" placeholder="Amount" className=" px-6 py-3 rounded-lg font-semibold flex items-center space-x-2  mb-3" onChange={(e) => setAmount(Number(e.target.value))} />
-</div>
-<button onClick={() => handleTransaction("DEBIT")} className=" bg-indigo-600 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2">Confirm Payment</button>
- </DialogDescription>
-</DialogHeader>
-</DialogContent>
- </Dialog>
+              <Dialog
+                open={isCreditDialogOpen}
+                onOpenChange={setIsCreditDialogOpen}
+              >
+                <DialogTrigger>
+                  <button
+                    className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700"
+                    type="button"
+                    disabled={!isCardIssued}
+                  >
+                    Credit
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Credit Transaction</DialogTitle>
+                    <DialogDescription>
+                      <div>
+                        <input
+                          type="number"
+                          placeholder="Amount"
+                          onChange={(e) => setAmount(Number(e.target.value))}
+                          className="px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 mb-3"
+                        />
+                      </div>
+                      <button
+                        onClick={() => handleTransaction("CREDIT")}
+                        className=" bg-indigo-600 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2"
+                        type="button"
+                      >
+                        Confirm Payment
+                      </button>
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+              <Dialog
+                open={isDebitDialogOpen}
+                onOpenChange={setIsDebitDialogOpen}
+              >
+                <DialogTrigger>
+                  <button
+                    className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
+                    type="button"
+                    disabled={!isCardIssued}
+                  >
+                    Debit
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Debit Transaction</DialogTitle>
+                    <DialogDescription>
+                      <div>
+                        <input
+                          type="number"
+                          placeholder="Amount"
+                          className=" px-6 py-3 rounded-lg font-semibold flex items-center space-x-2  mb-3"
+                          onChange={(e) => setAmount(Number(e.target.value))}
+                        />
+                      </div>
+                      <button
+                        onClick={() => handleTransaction("DEBIT")}
+                        className=" bg-indigo-600 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2"
+                      >
+                        Confirm Payment
+                      </button>
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
@@ -393,9 +447,7 @@ Debit
             </svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-            {debitTotal}
-            </div>
+            <div className="text-2xl font-bold">{debitTotal}</div>
           </CardContent>
         </Card>
       </div>

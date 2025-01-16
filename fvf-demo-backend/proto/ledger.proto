@@ -15,7 +15,7 @@ message CreateLedgerEntryRequest {
 
 message LedgerEntry {
     string id = 1;
-    string transaction_id = 2; // New field
+    string transaction_id = 2;
     string account_id = 3;
     string entry_type = 4; // DEBIT or CREDIT
     string amount = 5;

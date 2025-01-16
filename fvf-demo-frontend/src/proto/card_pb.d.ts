@@ -66,6 +66,9 @@ export class Card extends jspb.Message {
   getAvailableBalance(): string;
   setAvailableBalance(value: string): Card;
 
+  getCvv(): string;
+  setCvv(value: string): Card;
+
   getIssuedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
   setIssuedAt(value?: google_protobuf_timestamp_pb.Timestamp): Card;
   hasIssuedAt(): boolean;
@@ -90,6 +93,7 @@ export namespace Card {
     creditLimit: string,
     cardNumber: string,
     availableBalance: string,
+    cvv: string,
     issuedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     expiryDate: string,
   }
@@ -113,6 +117,9 @@ export class CardResponse extends jspb.Message {
 
   getAvailableBalance(): string;
   setAvailableBalance(value: string): CardResponse;
+
+  getCvv(): string;
+  setCvv(value: string): CardResponse;
 
   getIssuedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
   setIssuedAt(value?: google_protobuf_timestamp_pb.Timestamp): CardResponse;
@@ -138,6 +145,7 @@ export namespace CardResponse {
     creditLimit: string,
     cardNumber: string,
     availableBalance: string,
+    cvv: string,
     issuedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     expiryDate: string,
   }
@@ -249,6 +257,32 @@ export namespace GetBalanceRequest {
   }
 }
 
+export class GetBalanceResponse extends jspb.Message {
+  getBalance(): Balance | undefined;
+  setBalance(value?: Balance): GetBalanceResponse;
+  hasBalance(): boolean;
+  clearBalance(): GetBalanceResponse;
+
+  getCreditLimit(): Credit_limit | undefined;
+  setCreditLimit(value?: Credit_limit): GetBalanceResponse;
+  hasCreditLimit(): boolean;
+  clearCreditLimit(): GetBalanceResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetBalanceResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetBalanceResponse): GetBalanceResponse.AsObject;
+  static serializeBinaryToWriter(message: GetBalanceResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetBalanceResponse;
+  static deserializeBinaryFromReader(message: GetBalanceResponse, reader: jspb.BinaryReader): GetBalanceResponse;
+}
+
+export namespace GetBalanceResponse {
+  export type AsObject = {
+    balance?: Balance.AsObject,
+    creditLimit?: Credit_limit.AsObject,
+  }
+}
+
 export class Balance extends jspb.Message {
   getCardId(): string;
   setCardId(value: string): Balance;
@@ -268,6 +302,28 @@ export namespace Balance {
   export type AsObject = {
     cardId: string,
     currentBalance: string,
+  }
+}
+
+export class Credit_limit extends jspb.Message {
+  getCardId(): string;
+  setCardId(value: string): Credit_limit;
+
+  getCreditLimit(): string;
+  setCreditLimit(value: string): Credit_limit;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Credit_limit.AsObject;
+  static toObject(includeInstance: boolean, msg: Credit_limit): Credit_limit.AsObject;
+  static serializeBinaryToWriter(message: Credit_limit, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Credit_limit;
+  static deserializeBinaryFromReader(message: Credit_limit, reader: jspb.BinaryReader): Credit_limit;
+}
+
+export namespace Credit_limit {
+  export type AsObject = {
+    cardId: string,
+    creditLimit: string,
   }
 }
 
