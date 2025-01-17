@@ -180,7 +180,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
   const fetchDebitTotal = async () => {
     const storedCardData = localStorage.getItem("cardData");
     if (!storedCardData) {
-      console.error("No card data found in local storage.");
+      // console.error("No card data found in local storage.");
       setDebitTotal(0);
       return;
     }
@@ -303,7 +303,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                 open={isCreditDialogOpen}
                 onOpenChange={setIsCreditDialogOpen}
               >
-                <DialogTrigger>
+                <DialogTrigger asChild>
                   <button
                     className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700"
                     type="button"
@@ -315,7 +315,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Credit Transaction</DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription asChild>
                       <div>
                         <input
                           type="number"
@@ -339,7 +339,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                 open={isDebitDialogOpen}
                 onOpenChange={setIsDebitDialogOpen}
               >
-                <DialogTrigger>
+                <DialogTrigger asChild>
                   <button
                     className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
                     type="button"
@@ -351,7 +351,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Debit Transaction</DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription asChild>
                       <div>
                         <input
                           type="number"
