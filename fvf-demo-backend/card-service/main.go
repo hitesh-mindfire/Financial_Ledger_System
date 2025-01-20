@@ -195,7 +195,7 @@ func (s *CardService) GetBalance(ctx context.Context, req *pb.GetBalanceRequest)
 	return s.getBalance(ctx, req.CardId)
 }
 
-func (s *CardService) getBalance(ctx context.Context, cardID string) (*pb.Balance, error) {
+func (s *CardService) getBalance(_ context.Context, cardID string) (*pb.Balance, error) {
 	balance, credit_limit, err := s.GetCardBalance(cardID)
 	if err != nil {
 		return nil, err

@@ -77,6 +77,9 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
       } else {
         const currentBalance = response?.getCurrentBalance();
         setBalance(currentBalance);
+        cardData.availableBalance = currentBalance;
+
+        localStorage.setItem("cardData", JSON.stringify(cardData));
         setLoading(false);
       }
     });
@@ -95,13 +98,11 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
       (err: grpcWeb.RpcError | null, response: CardResponse | null) => {
         if (err) {
           setError(`Error: ${err.message}`);
-          console.log(err, "abc");
           return;
         }
 
         if (response) {
           const cardData = response.toObject();
-          console.log(cardData);
           setCardData(cardData);
           setIsCardIssued(true);
           setError(null); // Clear any previous errors
@@ -312,10 +313,13 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                     Credit
                   </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent aria-describedby="dialog-description">
                   <DialogHeader>
                     <DialogTitle>Credit Transaction</DialogTitle>
-                    <DialogDescription asChild>
+                    <DialogDescription className="mt-4">
+                      Enter the amount you want to credit to your account.
+                    </DialogDescription>
+                    <div>
                       <div>
                         <input
                           type="number"
@@ -331,7 +335,8 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                       >
                         Confirm Payment
                       </button>
-                    </DialogDescription>
+                    </div>
+                    {/* </DialogDescription> */}
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
@@ -348,10 +353,13 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                     Debit
                   </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent aria-describedby="dialog-description">
                   <DialogHeader>
                     <DialogTitle>Debit Transaction</DialogTitle>
-                    <DialogDescription asChild>
+                    <DialogDescription className="mt-4">
+                      Enter the amount you want to debit from your account.
+                    </DialogDescription>
+                    <div>
                       <div>
                         <input
                           type="number"
@@ -366,7 +374,7 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
                       >
                         Confirm Payment
                       </button>
-                    </DialogDescription>
+                    </div>
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
