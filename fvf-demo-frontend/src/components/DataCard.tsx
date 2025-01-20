@@ -98,13 +98,11 @@ const DataCard: React.FC<DataCardProps> = ({ onTransactionsUpdated }) => {
       (err: grpcWeb.RpcError | null, response: CardResponse | null) => {
         if (err) {
           setError(`Error: ${err.message}`);
-          console.log(err, "abc");
           return;
         }
 
         if (response) {
           const cardData = response.toObject();
-          console.log(cardData);
           setCardData(cardData);
           setIsCardIssued(true);
           setError(null); // Clear any previous errors
